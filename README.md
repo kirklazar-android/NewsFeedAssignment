@@ -2,6 +2,8 @@
 
 NewsFeedAssignment is an Android news reader built with Jetpack Compose and GNews. It provides category-based headlines, remote search, offline bookmarks, cached home-feed browsing, and article detail actions.
 
+The app is a standalone clone of the NewsWatch app. Its Room database is the source of truth for the home feed, so previously loaded headlines remain available when the device is offline.
+
 ## Toolchain
 
 - Gradle Wrapper 8.10.2
@@ -23,6 +25,12 @@ You can also provide the key through the `GNEWS_API_KEY` environment variable. K
 
 The app uses the key for local development and demo builds. Release builds intentionally use an empty key in this assignment configuration.
 
+## Background sync and notifications
+
+The app schedules unique WorkManager work named `news-feed-periodic-sync` when it starts. Every six hours, when an unmetered network is available, it refreshes the default India/English home feed. The first successful background refresh establishes a baseline silently; later refreshes show a local notification only when new articles are found.
+
+On Android 13 and newer, the app asks for notification permission from the foreground UI. Denying that permission does not disable background synchronization. Selecting a news-update notification opens the home feed.
+
 ## Build and test
 
 On Windows, make sure `local.properties` also contains the path to your Android SDK, for example:
@@ -31,19 +39,31 @@ On Windows, make sure `local.properties` also contains the path to your Android 
 sdk.dir=C:\\Users\\your-name\\AppData\\Local\\Android\\Sdk
 ```
 
+Run the unit tests with:
+
+```powershell
+.\gradlew.bat test
+```
+
 Run the standard verification tasks with:
 
 ```powershell
 .\gradlew.bat clean test lint assembleDebug
 ```
 
+The test suite covers the GNews/data refresh layer, repositories and use cases, ViewModels, WorkManager scheduling and result handling, notification content, and Compose navigation. Instrumentation tests require an attached emulator or device:
+
+```powershell
+.\gradlew.bat connectedDebugAndroidTest
+```
+
 The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Project structure
 
-- `:app` — application startup, Hilt configuration, activity, theme, and root navigation.
+- `:app` — application startup, Hilt configuration, activity, theme, root navigation, background sync, notifications, and app tests.
 - `:core` — domain models, repository contracts, search processing, and bookmark use cases.
-- `:data` — GNews networking, DTO mapping, Room persistence, repositories, and Paging components.
+- `:data` — GNews networking, DTO mapping, Room persistence, repositories, refresh logic, and Paging components.
 - `:feature-news` — Compose screens, ViewModels, navigation, article detail, WebView, and actions.
 
 Home data flows from GNews through the Room cache and Paging into Compose. Bookmarks are stored separately, remain available offline, and can be searched locally. Remote catalogue search requires network access.

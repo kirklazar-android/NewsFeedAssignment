@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -67,9 +68,15 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.hilt.work)
     ksp(libs.hilt.compiler)
+    kapt(libs.hilt.work.compiler)
 
     testImplementation(libs.junit4)
+    testImplementation(libs.androidx.work.testing)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))

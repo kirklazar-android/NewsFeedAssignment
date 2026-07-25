@@ -8,6 +8,7 @@ import com.newsfeedassignment.core.repository.BookmarkRepository
 import com.newsfeedassignment.core.repository.NewsRepository
 import com.newsfeedassignment.feature.news.NewsFeedAssignmentApp
 import com.newsfeedassignment.feature.news.detail.AndroidActivityStarter
+import com.newsfeedassignment.notifications.NotificationPermissionPrompt
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -17,6 +18,11 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var bookmarkRepository: BookmarkRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MaterialTheme { NewsFeedAssignmentApp(newsRepository, bookmarkRepository, AndroidActivityStarter(this)) } }
+        setContent {
+            MaterialTheme {
+                NewsFeedAssignmentApp(newsRepository, bookmarkRepository, AndroidActivityStarter(this))
+                NotificationPermissionPrompt()
+            }
+        }
     }
 }

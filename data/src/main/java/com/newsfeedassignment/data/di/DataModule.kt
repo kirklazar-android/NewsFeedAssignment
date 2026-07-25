@@ -11,6 +11,7 @@ import com.newsfeedassignment.data.persistence.BookmarkDao
 import com.newsfeedassignment.data.persistence.NewsDatabase
 import com.newsfeedassignment.data.persistence.RoomBookmarkRepository
 import com.newsfeedassignment.data.repository.HomeNewsRepository
+import com.newsfeedassignment.data.sync.NewsFeedRefresher
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -49,6 +50,8 @@ object DataModule {
     @Provides fun bookmarkRepository(dao: BookmarkDao): BookmarkRepository = RoomBookmarkRepository(dao)
 
     @Provides fun homeNewsRepository(api: GNewsApi, database: NewsDatabase): HomeNewsRepository = HomeNewsRepository(api, database)
+
+    @Provides fun newsFeedRefresher(api: GNewsApi, database: NewsDatabase): NewsFeedRefresher = NewsFeedRefresher(api, database)
 
     @Provides fun newsRepository(repository: HomeNewsRepository): NewsRepository = repository
 }
